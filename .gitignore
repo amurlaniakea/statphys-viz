@@ -1,0 +1,55 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Test / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+*.log
+*.png
+*.jpg
+*.gif
+*.mp4
+data/
+output/
+
+# Credentials / secrets
+credentials/
+*.pem
+*.key
+.env
+.env.local
+
+# Cache
+.cache/
+.ruff_cache/
+.mypy_cache/
+
+# Generated visualizations
+gallery_*.png
+*.html
