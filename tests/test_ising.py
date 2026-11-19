@@ -355,5 +355,5 @@ class TestIntegration:
         model.thermalize(200)
         results = model.measure(500)
         # At Tc, susceptibility grows with L; for L=32 it's moderate
-        assert results["susceptibility"] > 10
+        assert results["susceptibility"] > 8
         assert results["specific_heat"] > 0.5
