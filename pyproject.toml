@@ -69,6 +69,10 @@ markers = [
     "visual: marks tests that generate visual output",
 ]
 
+[tool.coverage.run]
+source = ["src/statphys_viz"]
+omit = ["src/statphys_viz/widgets.py"]
+
 [tool.ruff]
 target-version = "py310"
 line-length = 100

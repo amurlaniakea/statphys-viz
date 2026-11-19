@@ -33,7 +33,7 @@ jobs:
       - name: Check coverage (optional)
         if: matrix.python-version == '3.11'
         run: |
-          python -m pytest tests/ --cov=statphys_viz --cov-report=term-missing --cov-fail-under=50 --cov-exclude=src/statphys_viz/widgets.py
+          python -m pytest tests/ --cov=statphys_viz --cov-report=term-missing --cov-fail-under=50
 
   lint:
     runs-on: ubuntu-latest
