@@ -65,8 +65,8 @@ statphys-viz/
 ## Instalación
 
 ```bash
-# From PyPI (when published)
-pip install statphys-viz
+# From PyPI (not yet published — install from source below)
+# pip install statphys-viz
 
 # From source (development)
 git clone https://github.com/amurlaniakea/statphys-viz.git
