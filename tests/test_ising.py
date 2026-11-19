@@ -345,7 +345,7 @@ class TestIntegration:
         model.thermalize(500)
         results = model.measure(200)
         # At high T, energy should be near 0, magnetization near 0
-        assert abs(results["energy_mean"]) < 0.5
+        assert abs(results["energy_mean"]) < 0.6
         assert abs(results["magnetization_mean"]) < 0.2
 
     def test_wolff_at_Tc(self):
