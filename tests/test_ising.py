@@ -357,3 +357,41 @@ class TestIntegration:
         # At Tc, susceptibility grows with L; for L=32 it's moderate
         assert results["susceptibility"] > 8
         assert results["specific_heat"] > 0.5
+
+
+class TestOnsagerNumerics:
+    """Comparación cuantitativa con la solución exacta (antes solo se comprobaban signos)."""
+
+    def test_energy_at_tc_is_minus_sqrt2(self):
+        ex = OnsagerBenchmark().exact_values(ONSAGER_TC)
+        assert abs(ex.u_exact + np.sqrt(2.0)) < 1e-12
+
+    def test_energy_known_value(self):
+        # u(T=2.0) = -1.7455...
+        assert abs(OnsagerBenchmark().exact_values(2.0).u_exact + 1.74556) < 1e-4
+
+    @pytest.mark.parametrize("T", [1.5, 2.0, 2.5, 3.0, 3.5])
+    def test_specific_heat_is_du_dT(self, T):
+        b, h = OnsagerBenchmark(), 1e-5
+        du = (b.exact_values(T + h).u_exact - b.exact_values(T - h).u_exact) / (2 * h)
+        assert abs(b.exact_values(T).c_exact - du) < 1e-4
+
+    @pytest.mark.parametrize("algo", ["wolff", "metropolis"])
+    def test_mc_energy_matches_exact(self, algo):
+        model = IsingModel(IsingConfig(L=24, T=2.0, algorithm=algo, seed=3))
+        model.thermalize(300)
+        r = model.measure(1500)
+        exact = OnsagerBenchmark().exact_values(2.0).u_exact
+        assert abs(r["energy_mean"] - exact) < 0.02
+
+    def test_wolff_rejects_field(self):
+        with pytest.raises(ValueError):
+            IsingModel(IsingConfig(L=8, h=0.5, algorithm="wolff"))
+
+    def test_seed_reproducible(self):
+        def run():
+            m = IsingModel(IsingConfig(L=12, T=2.0, algorithm="metropolis", seed=7))
+            m.thermalize(20)
+            return m.spins.copy()
+
+        assert np.array_equal(run(), run())

@@ -53,3 +53,5 @@ credentials/
 # Generated visualizations
 gallery_*.png
 *.html
+!web/index.html
+docs/_build/
