@@ -1,8 +1,8 @@
 Historial de cambios
 ====================
 
-Sin publicar
-------------
+0.2.2
+-----
 
 * Widget de Jupyter: ya no lanza ``ValueError`` al combinar Wolff con un campo externo; ahora cambia
   de algoritmo o pone ``h`` a 0 (con tests).

@@ -224,7 +224,7 @@ Si usas este software, cítalo con el DOI de Zenodo (10.5281/zenodo.24389055):
   author  = {Sordo Martínez, Pedro},
   title   = {statphys-viz: Interactive statistical physics visualizations for education},
   year    = {2026},
-  version = {0.2.1},
+  version = {0.2.2},
   doi     = {10.5281/zenodo.24389055},
   url     = {https://github.com/amurlaniakea/statphys-viz},
   license = {AGPL-3.0-or-later}
