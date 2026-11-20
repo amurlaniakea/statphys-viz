@@ -4,7 +4,7 @@ authors:
   - family-names: "Sordo Martínez"
     given-names: "Pedro"
 title: "statphys-viz: Interactive statistical physics visualizations for education"
-version: 0.2.0
+version: 0.2.1
 doi: "10.5281/zenodo.24389055"
 date-released: 2026-11-20
 url: "https://github.com/amurlaniakea/statphys-viz"

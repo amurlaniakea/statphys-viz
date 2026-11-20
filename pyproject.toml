@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "statphys-viz"
-version = "0.2.0"
+version = "0.2.1"
 description = "Interactive statistical physics visualizations for education: Ising model Monte Carlo with Jupyter widgets and web demo"
 readme = "README.md"
 license = "AGPL-3.0-or-later"

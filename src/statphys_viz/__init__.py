@@ -29,7 +29,7 @@ exact solution.
 from .benchmark import CriticalExponents, OnsagerBenchmark
 from .ising import IsingConfig, IsingModel, MetropolisSampler, WolffClusterSampler
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 __author__ = "Pedro Sordo Martínez"
 __email__ = "amurlaniakea@gmail.com"
 __license__ = "AGPL-3.0-or-later"
