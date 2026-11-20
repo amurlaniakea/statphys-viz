@@ -32,14 +32,14 @@ statphys-viz delivers:
 
 | Component | Function | Validation |
 |-----------|----------|------------|
-| **IsingModel** | 2D square lattice with periodic boundaries | Energy/magnetization conservation |
-| **MetropolisSampler** | Single-spin-flip MCMC | Detailed balance test |
-| **WolffClusterSampler** | Cluster algorithm (critical slowing down ↓) | Autocorrelation time measurement |
-| **OnsagerBenchmark** | Exact solution comparison | Relative error tracking |
-| **IsingWidget** | Jupyter ipywidgets + ipycanvas live demo | Real-time parameter sweeps |
+| **IsingModel** | 2D square lattice with periodic boundaries | Unit tests: periodic indices, ΔE, observables |
+| **MetropolisSampler** | Single-spin-flip MCMC | MC energy vs Onsager at T=2.0 (test) |
+| **WolffClusterSampler** | Cluster algorithm (critical slowing down ↓) | MC energy vs Onsager at T=2.0; rejects h≠0 (tests) |
+| **OnsagerBenchmark** | Exact solution comparison | u(Tc)=−√2 and C=du/dT checked numerically |
+| **IsingWidget** | Jupyter ipywidgets + ipycanvas live demo | Wolff/field guard (test) |
 | **Web Demo** | Static GitHub Pages deployment | Zero-install access |
 
-All observables are validated against the Onsager exact solution (1944) with relative errors reported quantitatively.
+Energy per spin, |m| (below Tc) and specific heat are compared with Onsager's exact solution (1944) by `OnsagerBenchmark.validate()` and the CLI benchmark. Near Tc the error vs the L→∞ solution is large and expected (finite size); the quantitative checks in the test suite currently cover the energy.
 
 ## Arquitectura
 
@@ -48,23 +48,27 @@ statphys-viz/
 ├── src/statphys_viz/
 │   ├── __init__.py          # Public API
 │   ├── ising.py             # Core Ising model + MCMC samplers (numba JIT)
-│   ├── benchmark.py         # Onsager exact solution + finite-size scaling
+│   ├── benchmark.py         # Onsager exact solution + finite-size scaling + Binder
 │   ├── visualize.py         # Matplotlib plots + animations
 │   └── widgets.py           # Jupyter interactive widgets
 ├── tests/
-│   └── test_ising.py        # Unit + integration tests (validated vs Onsager)
+│   └── test_ising.py        # Unit, Onsager numerics, widget guard, integration
 ├── examples/
 │   └── temperature_scan.ipynb  # Notebook demo
-├── docs/                    # Sphinx documentation
-└── .github/workflows/ci.yml # CI: pytest + ruff + bandit on 3.10/3.11/3.12
+├── web/index.html           # Static demo (plain JS, KaTeX, ES/EN/FR) → GitHub Pages
+├── docs/                    # Sphinx documentation (Furo) → /docs/ on GitHub Pages
+├── CITATION.cff             # Citation metadata (Zenodo DOI)
+└── .github/workflows/
+    ├── ci.yml               # pytest + ruff + bandit on 3.10/3.11/3.12; docs build
+    └── pages.yml            # Builds the docs and deploys demo + docs to GitHub Pages
 ```
 
 **Key technical choices:**
-- **numba JIT** on MCMC loops → ~100× speedup vs pure Python
+- **numba JIT** on MCMC loops → ≈25× faster per Metropolis sweep than pure Python (measured, L=64; depends on hardware)
 - **Wolff cluster** → eliminates critical slowing down at Tc
 - **Onsager elliptic integrals** (scipy.special) → exact reference
-- **ipycanvas** → 60 FPS spin lattice rendering in notebooks
-- **GitHub Pages** → zero-install web demo for classrooms
+- **ipycanvas** → live spin lattice rendering in notebooks
+- **GitHub Pages** → zero-install web demo and online documentation for classrooms
 
 ## Instalación
 
@@ -76,9 +80,10 @@ statphys-viz/
 git clone https://github.com/amurlaniakea/statphys-viz.git
 cd statphys-viz
 pip install -e ".[dev]"   # includes pytest, ruff, bandit
+pip install -e ".[docs]"  # Sphinx + Furo, to build the documentation
 ```
 
-**Requirements:** Python ≥ 3.10, NumPy, Numba, Matplotlib, SciPy, ipywidgets.
+**Requirements:** Python ≥ 3.10 (CI: 3.10–3.12), NumPy, Numba, Matplotlib, SciPy, ipywidgets, ipycanvas. On recent Debian/Ubuntu use a virtual environment (`python3 -m venv .venv`).
 
 ## Uso
 
@@ -116,11 +121,11 @@ widget.display()
 ```
 
 Features:
-- **Live spin lattice** (ipycanvas, 60 FPS)
-- **Temperature slider** with Tc marker
-- **Real-time energy/magnetization plots**
-- **Algorithm switch** (Metropolis ↔ Wolff)
-- **One-click thermalization & measurement**
+- **Live spin lattice** (ipycanvas)
+- **Sliders** for temperature (Tc marked), lattice size L, coupling J and field h
+- **Algorithm switch** (Metropolis ↔ Wolff). Wolff requires h = 0: moving h switches to Metropolis, and choosing Wolff resets h to 0
+- **Run / Stop / Reset / Step** buttons with a thermalization-steps slider
+- **Live energy/magnetization plots**
 
 ### Temperature Scan (Automated Benchmark)
 
@@ -157,13 +162,13 @@ python -m pytest tests/ --cov=statphys_viz --cov-report=term-missing
 ```
 
 **Test categories:**
-- **Unit**: Periodic boundaries, ΔE calculation, sampler interfaces
-- **Validation**: Onsager exact solution (energy, M, C, χ)
-- **Critical exponents**: Finite-size scaling fits (β=1/8, γ=7/4, ν=1)
-- **Binder cumulant**: Tc crossing verification
-- **Integration**: Full MCMC cycle with error bounds
+- **Unit**: periodic boundaries, ΔE calculation, sampler interfaces
+- **Onsager numerics**: u(Tc)=−√2, C=du/dT, MC energy vs exact at T=2.0 (Wolff and Metropolis)
+- **Utilities**: critical-exponent power-law fits and Binder cumulant function (synthetic data)
+- **Widget guard**: Wolff/field handling in `IsingWidget`
+- **Integration** (marked slow): equilibration at high T and Wolff at Tc, with loose bounds
 
-All validation tests assert relative errors vs Onsager exact solution.
+Quantitative MC-vs-Onsager checks in the test suite currently cover the energy; |m|, C and χ are compared by `validate()` and the CLI benchmark (see *Resultados*).
 
 ## Resultados
 
@@ -179,17 +184,18 @@ python -m statphys_viz.benchmark --L 32 --T-min 1.5 --T-max 3.5 --points 5
 | 2.0 | -1.743 | -1.746 | 0.910 | 0.911 |
 | 3.0 | -0.831 | -0.817 | 0.095 | 0 (finite-size) |
 
-Los exponentes críticos se obtienen con `fit_critical_exponents` (ver tests).
+Para los exponentes críticos hay `statphys_viz.benchmark.fit_critical_exponents`, y para el cruce del cumulante de Binder `binder_cumulant` y `estimate_tc_from_binder`. Los tests cubren el ajuste de potencias y la función de Binder con datos sintéticos; aún no hay un estudio de escalado completo con Monte Carlo.
 
 ## Live Demo
 
 **[GitHub Pages Demo →](https://amurlaniakea.github.io/statphys-viz/)**
 
 Zero-installation web demo with:
-- Interactive temperature slider
-- Live spin lattice animation
-- Real-time observable plots
-- Algorithm comparison (Metropolis vs Wolff)
+- Interactive temperature slider and Metropolis/Wolff selector
+- Live spin lattice animation, with Onsager's exact values next to the measured ones
+- Chart of e and |m| vs T with the exact curve and a one-click sweep
+- Exportable CSV data (time series, lattice, sweep vs exact solution)
+- Theory with LaTeX formulas in Spanish, English and French
 
 *Runs entirely in the browser in plain JavaScript (`web/index.html`); numba does not run under Pyodide.*
 

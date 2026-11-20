@@ -348,6 +348,15 @@ class IsingWidget:
     def _on_param_change(self, change) -> None:
         """Handle parameter changes (T, J, h)."""
         if change["name"] == "value":
+            # Wolff no admite campo externo: si se mueve h con Wolff, pasar a Metropolis
+            # (el cambio del desplegable reconstruye el modelo).
+            if (
+                change.get("owner") is self.h_slider
+                and self.h_slider.value != 0
+                and self.algo_dropdown.value == "wolff"
+            ):
+                self.algo_dropdown.value = "metropolis"
+                return
             self.config = IsingConfig(
                 L=self.L,
                 T=self.temp_slider.value,
@@ -368,6 +377,10 @@ class IsingWidget:
     def _on_algo_change(self, change) -> None:
         """Handle algorithm change."""
         if change["name"] == "value":
+            # Wolff solo es válido con h = 0: poner h a 0 (esto reconstruye el modelo).
+            if self.algo_dropdown.value == "wolff" and self.h_slider.value != 0:
+                self.h_slider.value = 0
+                return
             self.config = IsingConfig(
                 L=self.L,
                 T=self.temp_slider.value,

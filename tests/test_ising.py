@@ -395,3 +395,26 @@ class TestOnsagerNumerics:
             return m.spins.copy()
 
         assert np.array_equal(run(), run())
+
+
+class TestWidgetFieldGuard:
+    """El widget no debe romperse al combinar Wolff con un campo externo."""
+
+    def test_field_with_wolff_switches_to_metropolis(self):
+        from statphys_viz.widgets import IsingWidget
+
+        w = IsingWidget(L=8, T=2.0, algorithm="wolff")
+        w.h_slider.value = 0.5
+        assert w.algo_dropdown.value == "metropolis"
+        assert w.config.algorithm == "metropolis"
+        assert w.config.h == 0.5
+
+    def test_wolff_resets_field_to_zero(self):
+        from statphys_viz.widgets import IsingWidget
+
+        w = IsingWidget(L=8, T=2.0, algorithm="metropolis")
+        w.h_slider.value = 0.5
+        w.algo_dropdown.value = "wolff"
+        assert w.h_slider.value == 0
+        assert w.config.algorithm == "wolff"
+        assert w.config.h == 0

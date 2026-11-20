@@ -35,6 +35,7 @@ Reglas del algoritmo
 * ``algorithm="wolff"`` (por defecto): voltea clusters, sin ralentización crítica. **Solo es válido con h = 0**;
   con ``h != 0`` lanza ``ValueError``.
 * ``algorithm="metropolis"``: voltea espines sueltos; admite campo externo, pero cerca de Tc converge muy despacio.
+* En el widget de Jupyter, mover ``h`` con Wolff seleccionado cambia a Metropolis, y elegir Wolff pone ``h`` a 0.
 * ``seed`` siembra la red inicial **y** el generador de numba. Es un estado global del proceso: dos modelos
   creados en el mismo proceso comparten ese generador.
 
