@@ -7,6 +7,7 @@
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0.txt)
 [![CI](https://github.com/amurlaniakea/statphys-viz/actions/workflows/ci.yml/badge.svg)](https://github.com/amurlaniakea/statphys-viz/actions/workflows/ci.yml)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24389056.svg)](https://doi.org/10.5281/zenodo.24389056)
 
 **statphys-viz** provides a complete, verified implementation of the 2D Ising model for statistical physics education. It includes both Metropolis and Wolff cluster Monte Carlo algorithms, real-time visualization via Jupyter widgets, and quantitative validation against the Onsager exact solution.
 
@@ -203,3 +204,21 @@ Copyright (C) 2026 Pedro Sordo Martínez — amurlaniakea@gmail.com
 - Metropolis et al. (1953). *Equation of State Calculations by Fast Computing Machines*. J. Chem. Phys. 21, 1087. [DOI](https://doi.org/10.1063/1.1699114)
 - Binder, K. (1981). *Finite size scaling analysis of Ising model block distribution functions*. Z. Phys. B 43, 119. [DOI](https://doi.org/10.1007/BF01293604)
 - Ferdinand & Fisher (1969). *Bounded and inhomogeneous Ising models*. Phys. Rev. 185, 832. [DOI](https://doi.org/10.1103/PhysRev.185.832)
+
+## Cómo citar
+
+Si usas este software, cítalo con el DOI de Zenodo (10.5281/zenodo.24389056):
+
+```bibtex
+@software{sordo_statphys_viz_2026,
+  author  = {Sordo Martínez, Pedro},
+  title   = {statphys-viz: Interactive statistical physics visualizations for education},
+  year    = {2026},
+  version = {0.2.0},
+  doi     = {10.5281/zenodo.24389056},
+  url     = {https://github.com/amurlaniakea/statphys-viz},
+  license = {AGPL-3.0-or-later}
+}
+```
+
+GitHub también ofrece «Cite this repository» a partir de `CITATION.cff`.
