@@ -79,7 +79,7 @@ Por eso con :math:`L` finito los picos se redondean y :math:`|m|` no cae a 0 por
 Referencias
 -----------
 
-* L. Onsager (1944), *Crystal Statistics. I.*, Phys. Rev. 65, 117. https://doi.org/10.1103/PhysRev.65.117
-* N. Metropolis et al. (1953), J. Chem. Phys. 21, 1087. https://doi.org/10.1063/1.1699114
-* U. Wolff (1989), Phys. Rev. Lett. 62, 361. https://doi.org/10.1103/PhysRevLett.62.361
-* K. Binder (1981), Z. Phys. B 43, 119. https://doi.org/10.1007/BF01293604
+* L\. Onsager (1944), *Crystal Statistics. I.*, Phys. Rev. 65, 117. https://doi.org/10.1103/PhysRev.65.117
+* N\. Metropolis et al. (1953), J. Chem. Phys. 21, 1087. https://doi.org/10.1063/1.1699114
+* U\. Wolff (1989), Phys. Rev. Lett. 62, 361. https://doi.org/10.1103/PhysRevLett.62.361
+* K\. Binder (1981), Z. Phys. B 43, 119. https://doi.org/10.1007/BF01293604
