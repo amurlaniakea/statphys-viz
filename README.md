@@ -11,6 +11,8 @@
 
 🌐 **Demo en vivo:** <https://amurlaniakea.github.io/statphys-viz/>
 
+📚 **Documentación:** <https://amurlaniakea.github.io/statphys-viz/docs/>
+
 **statphys-viz** provides a complete, verified implementation of the 2D Ising model for statistical physics education. It includes both Metropolis and Wolff cluster Monte Carlo algorithms, real-time visualization via Jupyter widgets, and quantitative validation against the Onsager exact solution.
 
 ---
@@ -85,8 +87,8 @@ pip install -e ".[dev]"   # includes pytest, ruff, bandit
 ```python
 from statphys_viz import IsingConfig, IsingModel, OnsagerBenchmark
 
-# Configure model near critical temperature
-config = IsingConfig(L=64, T=2.269, J=1.0, algorithm="wolff")
+# Configure the model (T=2.0: ordered phase; near Tc the error vs Onsager is large due to finite size)
+config = IsingConfig(L=64, T=2.0, J=1.0, algorithm="wolff")
 model = IsingModel(config)
 
 # Thermalize and measure
@@ -100,7 +102,7 @@ print(f"C:           {results['specific_heat']:.4f}")
 
 # Validate against Onsager exact
 benchmark = OnsagerBenchmark(L=64)
-errors = benchmark.validate(results, T=2.269)
+errors = benchmark.validate(results, T=2.0)
 print(f"Max relative error: {errors['max_rel_error']:.2%}")
 ```
 

@@ -54,7 +54,7 @@ docs = [
 Homepage = "https://github.com/amurlaniakea/statphys-viz"
 Repository = "https://github.com/amurlaniakea/statphys-viz"
 Issues = "https://github.com/amurlaniakea/statphys-viz/issues"
-Documentation = "https://amurlaniakea.github.io/statphys-viz/"
+Documentation = "https://amurlaniakea.github.io/statphys-viz/docs/"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
