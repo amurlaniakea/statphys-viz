@@ -9,6 +9,8 @@
 [![CI](https://github.com/amurlaniakea/statphys-viz/actions/workflows/ci.yml/badge.svg)](https://github.com/amurlaniakea/statphys-viz/actions/workflows/ci.yml)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24389055.svg)](https://doi.org/10.5281/zenodo.24389055)
 
+🌐 **Demo en vivo:** <https://amurlaniakea.github.io/statphys-viz/>
+
 **statphys-viz** provides a complete, verified implementation of the 2D Ising model for statistical physics education. It includes both Metropolis and Wolff cluster Monte Carlo algorithms, real-time visualization via Jupyter widgets, and quantitative validation against the Onsager exact solution.
 
 ---
@@ -222,7 +224,3 @@ Si usas este software, cítalo con el DOI de Zenodo (10.5281/zenodo.24389055):
 ```
 
 GitHub también ofrece «Cite this repository» a partir de `CITATION.cff`.
-
----
-
-🌐 **Demo en vivo:** <https://amurlaniakea.github.io/statphys-viz/>
