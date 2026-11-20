@@ -3,44 +3,129 @@
 <!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
 <html lang="es"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>statphys-viz · Modelo de Ising 2D</title>
+<title>statphys-viz · Modelo de Ising 2D interactivo</title>
+<meta name="description" content="Simulación interactiva del modelo de Ising 2D (Metropolis y Wolff) comparada con la solución exacta de Onsager. Datos exportables en CSV. Herramienta educativa de física estadística.">
 <style>
-:root{--bg:#fff;--fg:#1a1a1a;--mut:#666}
-@media(prefers-color-scheme:dark){:root{--bg:#14161a;--fg:#e8e8e8;--mut:#9aa}}
-body{margin:0;padding:1rem;font:16px system-ui,sans-serif;background:var(--bg);color:var(--fg);max-width:720px;margin:auto}
-canvas{width:100%;max-width:512px;image-rendering:pixelated;border:1px solid var(--mut);display:block}
-label{display:block;margin:.6rem 0 .2rem}input[type=range]{width:100%;max-width:512px}
-button,select{font:inherit;padding:.3rem .7rem;margin-right:.4rem}
-#obs{color:var(--mut);font-variant-numeric:tabular-nums}
+:root{--bg:#fff;--fg:#1a1a1a;--mut:#5a6270;--card:#f4f6f8;--line:#c9d0d8;--lnk:#0b63c5;--g:#1b8f37;--r:#d11f1f}
+@media(prefers-color-scheme:dark){:root{--bg:#14161a;--fg:#e8e8e8;--mut:#9aa4b2;--card:#1d2127;--line:#343b45;--lnk:#6db3ff;--g:#3ddc63;--r:#ff5a5a}}
+*{box-sizing:border-box}body{margin:0;padding:1rem;font:16px/1.55 system-ui,sans-serif;background:var(--bg);color:var(--fg);max-width:760px;margin:auto}
+.lema{text-align:center;color:var(--mut);font-style:italic;margin:.2rem 0 1rem}
+h1{margin:.2rem 0}h2{font-size:1.15rem;margin:1.6rem 0 .4rem}a{color:var(--lnk)}
+canvas{width:100%;max-width:512px;image-rendering:pixelated;border:1px solid var(--line);display:block}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:.7rem .9rem;margin:.8rem 0;max-width:512px}
+input[type=range]{width:100%}button,select{font:inherit;padding:.3rem .7rem;margin:.2rem .3rem .2rem 0}
+.sw{display:inline-block;width:.9em;height:.9em;border-radius:2px;vertical-align:-.1em}
+#obs,#ph{font-variant-numeric:tabular-nums;margin:.3rem 0}#ph{color:var(--mut)}
+table{border-collapse:collapse;font-size:.85rem;font-variant-numeric:tabular-nums}th,td{border:1px solid var(--line);padding:.15rem .45rem;text-align:right}
+.sc{overflow-x:auto}details{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:.5rem .9rem;margin:.6rem 0}
+summary{cursor:pointer;font-weight:600}code{font-size:.92em}li{margin:.25rem 0}
+footer{margin:2.2rem 0 1rem;padding-top:1rem;border-top:1px solid var(--line);text-align:center;color:var(--mut)}
+.sig{font-size:1.1rem;letter-spacing:.04em}.g{color:var(--g)}.r{color:var(--r)}
 </style></head><body>
+<p class="lema">«Tecnósfera al servicio de la Biósfera.» — «La Paz Es El Camino.»</p>
 <h1>Modelo de Ising 2D</h1>
-<p>Monte Carlo en tu navegador (JS puro, sin instalación). T<sub>c</sub> ≈ 2.269.</p>
-<canvas id="c" width="64" height="64"></canvas>
-<label>Temperatura T = <b id="tv">2.269</b></label>
+<p>Simulación Monte Carlo interactiva de una transición de fase, comparada con la solución exacta de Onsager. Todo se calcula en tu navegador y puedes descargar los datos para verificarlos.</p>
+
+<h2>Qué estás viendo</h2>
+<ul>
+<li>Cada celda es un espín: <span class="sw" style="background:#e65a28"></span> naranja = +1, <span class="sw" style="background:#2859c8"></span> azul = −1. La red es de 64×64 con bordes periódicos.</li>
+<li><b>Temperatura T</b> (unidades J/k<sub>B</sub>): a T baja los espines se alinean y se forman dominios grandes. A T alta domina el desorden. Cerca de T<sub>c</sub> ≈ 2.269 aparecen fluctuaciones a todas las escalas.</li>
+<li><b>e/espín</b>: energía por espín (−2 en el orden total, cerca de 0 en el desorden). <b>|m|</b>: magnetización absoluta por espín (1 = todos alineados, ≈0 = desordenado).</li>
+<li><b>Wolff</b> voltea clusters enteros y no sufre ralentización crítica. <b>Metropolis</b> voltea espines sueltos y cerca de T<sub>c</sub> converge muy despacio: compáralos.</li>
+</ul>
+
+<canvas id="c" width="64" height="64" role="img" aria-label="Red de espines del modelo de Ising"></canvas>
+<div class="panel">
+<label for="T">Temperatura T = <b id="tv">2.269</b></label>
 <input id="T" type="range" min="1" max="4" step="0.01" value="2.269">
-<label>Algoritmo</label>
-<select id="alg"><option value="wolff">Wolff (cluster)</option><option value="metro">Metropolis</option></select>
+<select id="alg" aria-label="Algoritmo"><option value="wolff">Wolff (cluster)</option><option value="metro">Metropolis</option></select>
 <button id="run">Pausa</button><button id="rst">Reiniciar</button>
-<p id="obs"></p>
+<div id="ph"></div><div id="obs"></div>
+</div>
+
+<h2>Datos exportables</h2>
+<p>Descarga CSV para analizarlos con tu propio código. Las líneas que empiezan por <code>#</code> son metadatos (en pandas: <code>read_csv(..., comment="#")</code>).</p>
+<div class="panel">
+<button id="dh">Serie temporal (CSV)</button><button id="dl">Red actual (CSV)</button><br>
+<button id="sc">Barrido de T con comparación exacta (CSV)</button> <span id="prog"></span>
+<div class="sc"><table id="tb" hidden></table></div>
+<small>Barrido: L=32, Wolff, 300 clusters de termalización y 1500 de medida por T, semilla fija (reproducible). La solución exacta es para L→∞, por eso cerca de T<sub>c</sub> el MC se desvía (efecto de tamaño finito).</small>
+</div>
+
+<h2>Teoría y fórmulas</h2>
+<details><summary>Modelo, algoritmos y observables</summary><ul>
+<li>Hamiltoniano: <code>H = −J Σ<sub>⟨ij⟩</sub> s<sub>i</sub> s<sub>j</sub></code>, con s<sub>i</sub> = ±1 y vecinos más próximos. Aquí J = k<sub>B</sub> = 1 y β = 1/T. Probabilidad de Boltzmann: <code>P(s) ∝ e<sup>−βH</sup></code>.</li>
+<li>Metropolis (1953): se voltea un espín con probabilidad <code>min(1, e<sup>−βΔE</sup>)</code>, con <code>ΔE = 2J s<sub>i</sub> Σ<sub>vecinos</sub> s<sub>j</sub></code>.</li>
+<li>Wolff (1989): se crece un cluster de espines iguales añadiendo vecinos con probabilidad <code>p = 1 − e<sup>−2βJ</sup></code> y se voltea entero. Solo es válido sin campo externo (h = 0).</li>
+<li>Observables por espín: <code>e = ⟨E⟩/N</code>, <code>m = ⟨|M|⟩/N</code>, calor específico <code>C = N β² (⟨e²⟩ − ⟨e⟩²)</code> y susceptibilidad <code>χ = N β (⟨m²⟩ − ⟨|m|⟩²)</code>, con N = L².</li>
+<li>Cumulante de Binder: <code>U<sub>4</sub> = 1 − ⟨m⁴⟩ / (3⟨m²⟩²)</code>. Las curvas de distintos L se cruzan en T<sub>c</sub>.</li></ul></details>
+<details><summary>Solución exacta de Onsager (L → ∞)</summary><ul>
+<li>Temperatura crítica: <code>T<sub>c</sub> = 2J / ln(1 + √2) ≈ 2.26919</code>.</li>
+<li>Magnetización espontánea (T &lt; T<sub>c</sub>): <code>m = (1 − sinh<sup>−4</sup>(2βJ))<sup>1/8</sup></code>; vale 0 para T &gt; T<sub>c</sub>.</li>
+<li>Energía por espín: <code>u = −J coth(2βJ) [1 + (2/π)(2 tanh²(2βJ) − 1) K(κ)]</code>, con <code>κ = 2 sinh(2βJ) / cosh²(2βJ)</code> y K la integral elíptica completa de primera especie (de módulo κ). En T<sub>c</sub>, u = −√2.</li>
+<li>Calor específico: <code>C = du/dT</code>, con divergencia logarítmica en T<sub>c</sub>.</li></ul></details>
+<details><summary>Exponentes críticos y tamaño finito</summary><ul>
+<li>Cerca de T<sub>c</sub>: <code>m ∼ |T − T<sub>c</sub>|<sup>β</sup></code> con β = 1/8, <code>χ ∼ |T − T<sub>c</sub>|<sup>−γ</sup></code> con γ = 7/4, longitud de correlación <code>ξ ∼ |T − T<sub>c</sub>|<sup>−ν</sup></code> con ν = 1, y C con α = 0 (logarítmico).</li>
+<li>En T<sub>c</sub> y tamaño finito: <code>m ∼ L<sup>−β/ν</sup></code> = L<sup>−1/8</sup> y <code>χ ∼ L<sup>γ/ν</sup></code> = L<sup>7/4</sup>. Por eso con L finito los picos se redondean y |m| no cae exactamente a 0 por encima de T<sub>c</sub>.</li></ul></details>
+<details><summary>Referencias</summary><ul>
+<li>Onsager, L. (1944). Phys. Rev. 65, 117. <a href="https://doi.org/10.1103/PhysRev.65.117">doi:10.1103/PhysRev.65.117</a></li>
+<li>Metropolis et al. (1953). J. Chem. Phys. 21, 1087. <a href="https://doi.org/10.1063/1.1699114">doi:10.1063/1.1699114</a></li>
+<li>Wolff, U. (1989). Phys. Rev. Lett. 62, 361. <a href="https://doi.org/10.1103/PhysRevLett.62.361">doi:10.1103/PhysRevLett.62.361</a></li>
+<li>Binder, K. (1981). Z. Phys. B 43, 119. <a href="https://doi.org/10.1007/BF01293604">doi:10.1007/BF01293604</a></li></ul></details>
+
+<footer>
+<a href="https://github.com/amurlaniakea/statphys-viz">Código fuente en GitHub</a> · AGPL-3.0-or-later · © 2026 Pedro Sordo Martínez<br>
+<span class="sig"><b class="g">MagoPredator</b> <b class="r">SPAIN</b></span>
+</footer>
+
 <script>
 "use strict";
-const L=64,N=L*L;let s=new Int8Array(N),T=2.269,run=true;
-const cv=document.getElementById("c"),ctx=cv.getContext("2d"),img=ctx.createImageData(L,L);
-function reset(){for(let i=0;i<N;i++)s[i]=Math.random()<.5?1:-1}
-function nb(i){const x=i%L,y=(i/L)|0;return[y*L+(x+1)%L,y*L+(x+L-1)%L,((y+1)%L)*L+x,((y+L-1)%L)*L+x]}
-const NB=Array.from({length:N},(_,i)=>nb(i));
-function metro(){for(let k=0;k<N;k++){const i=(Math.random()*N)|0;let h=0;for(const j of NB[i])h+=s[j];
- const dE=2*s[i]*h;if(dE<=0||Math.random()<Math.exp(-dE/T))s[i]=-s[i]}}
-function wolff(){const p=1-Math.exp(-2/T),seed=(Math.random()*N)|0,v=s[seed],st=[seed],inC=new Uint8Array(N);inC[seed]=1;
- while(st.length){const i=st.pop();for(const j of NB[i])if(!inC[j]&&s[j]===v&&Math.random()<p){inC[j]=1;st.push(j)}}
- for(let i=0;i<N;i++)if(inC[i])s[i]=-s[i]}
-function obs(){let m=0,e=0;for(let i=0;i<N;i++){m+=s[i];e-=s[i]*(s[NB[i][0]]+s[NB[i][2]])}
- return[e/N,Math.abs(m)/N]}
-function draw(){for(let i=0;i<N;i++){const c=s[i]>0?[230,90,40]:[40,90,200];img.data.set([...c,255],4*i)}
- ctx.putImageData(img,0,0);const[e,m]=obs();document.getElementById("obs").textContent=`e/espín = ${e.toFixed(3)}   |m| = ${m.toFixed(3)}`}
-function frame(){if(run){const w=document.getElementById("alg").value==="wolff";if(w)for(let k=0;k<5;k++)wolff();else metro();draw()}requestAnimationFrame(frame)}
-document.getElementById("T").oninput=e=>{T=+e.target.value;document.getElementById("tv").textContent=T.toFixed(3)};
-document.getElementById("run").onclick=e=>{run=!run;e.target.textContent=run?"Pausa":"Continuar"};
-document.getElementById("rst").onclick=()=>{reset();draw()};
-reset();draw();frame();
+/*CORE*/
+const TC=2/Math.log(1+Math.SQRT2);
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function ellipKE(m){let a=1,b=Math.sqrt(1-m),c=Math.sqrt(m),sum=0.5*c*c,p=0.5;
+ for(let n=1;n<40&&Math.abs(c)>1e-16;n++){c=(a-b)/2;const t=(a+b)/2;b=Math.sqrt(a*b);a=t;p*=2;sum+=p*c*c}
+ const K=Math.PI/(2*a);return[K,K*(1-sum)]}
+function exact(T){const K2=2/T,sh=Math.sinh(K2),ch=Math.cosh(K2),th=Math.tanh(K2);
+ const mag=T<TC?Math.pow(1-Math.pow(sh,-4),0.125):0;
+ if(Math.abs(T-TC)<1e-9)return{u:-Math.SQRT2,c:Infinity,m:0};
+ const[K,E]=ellipKE(Math.min(Math.pow(2*sh/(ch*ch),2),1-1e-15)),q=2*th*th-1;
+ return{m:mag,u:-(1/th)*(1+2/Math.PI*q*K),c:(1/Math.PI)*Math.pow(K2/th,2)*(K-E-(1-th*th)*(Math.PI/2+q*K))}}
+function make(L,R){const N=L*L,s=new Int8Array(N),NB=new Array(N);
+ for(let i=0;i<N;i++){const x=i%L,y=(i/L)|0;NB[i]=[y*L+(x+1)%L,y*L+(x+L-1)%L,((y+1)%L)*L+x,((y+L-1)%L)*L+x]}
+ const reset=()=>{for(let i=0;i<N;i++)s[i]=R()<.5?1:-1};
+ const metro=T=>{for(let k=0;k<N;k++){const i=(R()*N)|0;let h=0;for(const j of NB[i])h+=s[j];
+  const dE=2*s[i]*h;if(dE<=0||R()<Math.exp(-dE/T))s[i]=-s[i]}};
+ const wolff=T=>{const p=1-Math.exp(-2/T),sd=(R()*N)|0,v=s[sd],st=[sd],inC=new Uint8Array(N);inC[sd]=1;
+  while(st.length){const i=st.pop();for(const j of NB[i])if(!inC[j]&&s[j]===v&&R()<p){inC[j]=1;st.push(j)}}
+  for(let i=0;i<N;i++)if(inC[i])s[i]=-s[i]};
+ const obs=()=>{let m=0,e=0;for(let i=0;i<N;i++){m+=s[i];e-=s[i]*(s[NB[i][0]]+s[NB[i][2]])}return[e/N,Math.abs(m)/N]};
+ reset();return{L,N,s,reset,metro,wolff,obs}}
+/*END*/
+const $=id=>document.getElementById(id);
+const sim=make(64,Math.random),ctx=$("c").getContext("2d"),img=ctx.createImageData(64,64);
+let T=2.269,run=true,step=0,hist=[],ex=exact(T);
+function dl(name,text){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type:"text/csv"}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function phase(){return T<TC-0.05?"Fase ordenada (T < Tc): dominios de un solo signo.":T>TC+0.05?"Fase desordenada (T > Tc): espines casi independientes.":"Región crítica (T ≈ Tc): clusters a todas las escalas."}
+function draw(){const N=sim.N;for(let i=0;i<N;i++)img.data.set(sim.s[i]>0?[230,90,40,255]:[40,90,200,255],4*i);ctx.putImageData(img,0,0);
+ const[e,m]=sim.obs();$("obs").textContent=`e/espín = ${e.toFixed(3)} (exacta ${ex.u.toFixed(3)})   |m| = ${m.toFixed(3)} (exacta ${ex.m.toFixed(3)})`;
+ $("ph").textContent=phase();return[e,m]}
+function frame(){if(run){const w=$("alg").value==="wolff";if(w)for(let k=0;k<5;k++)sim.wolff(T);else sim.metro(T);
+ const[e,m]=draw();step++;if(hist.length>=20000)hist.splice(0,1000);hist.push([step,T,e,m])}requestAnimationFrame(frame)}
+$("T").oninput=e=>{T=+e.target.value;ex=exact(T);$("tv").textContent=T.toFixed(3)};
+$("run").onclick=e=>{run=!run;e.target.textContent=run?"Pausa":"Continuar"};
+$("rst").onclick=()=>{sim.reset();step=0;hist=[];draw()};
+$("dh").onclick=()=>dl("ising_serie_temporal.csv",`# statphys-viz, L=64, algoritmo=${$("alg").value} (el valor actual del selector), e y m por espín\n# un paso = 5 clusters de Wolff o 1 barrido de Metropolis\nstep,T,e_per_spin,abs_m_per_spin\n`+hist.map(r=>r[0]+","+r[1]+","+r[2].toFixed(6)+","+r[3].toFixed(6)).join("\n"));
+$("dl").onclick=()=>{let o=`# statphys-viz, red 64x64 con espines +1/-1, T=${T}\n`;for(let y=0;y<64;y++)o+=Array.from(sim.s.slice(y*64,y*64+64)).join(",")+"\n";dl("ising_red.csv",o)};
+let rows=[];
+$("sc").onclick=async()=>{const b=$("sc");b.disabled=true;const L=32,n=21,m=make(L,mulberry32(1)),N=L*L;rows=[];
+ for(let k=0;k<n;k++){const t=1.5+2*k/(n-1);m.reset();for(let i=0;i<300;i++)m.wolff(t);
+  let se=0,se2=0,sm=0,sm2=0;const M=1500;for(let i=0;i<M;i++){m.wolff(t);const[e,a]=m.obs();se+=e;se2+=e*e;sm+=a;sm2+=a*a}
+  const e1=se/M,m1=sm/M,x=exact(t);rows.push([t,e1,x.u,m1,x.m,N*(se2/M-e1*e1)/(t*t),x.c,N*(sm2/M-m1*m1)/t]);
+  $("prog").textContent=`${k+1}/${n}`;await new Promise(r=>setTimeout(r))}
+ const H=["T","e_MC","e_exact","absm_MC","absm_exact","C_MC","C_exact","chi_MC"],f=v=>v===Infinity?"∞":v.toFixed(4);
+ $("tb").innerHTML="<tr>"+H.map(h=>"<th>"+h+"</th>").join("")+"</tr>"+rows.map(r=>"<tr>"+r.map(v=>"<td>"+f(v)+"</td>").join("")+"</tr>").join("");$("tb").hidden=false;
+ dl("ising_barrido_vs_onsager.csv",`# statphys-viz, L=${L}, Wolff, termalizacion=300, medidas=1500, semilla=1 (mulberry32)\n# *_exact: solucion de Onsager para L->infinito (C_exact=inf en Tc)\n`+H.join(",")+"\n"+rows.map(r=>r.map(v=>v===Infinity?"inf":v.toFixed(6)).join(",")).join("\n"));
+ b.disabled=false;$("prog").textContent="listo"};
+sim.reset();draw();frame();
 </script></body></html>
