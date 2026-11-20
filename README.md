@@ -1,7 +1,7 @@
 <!-- SPDX-FileCopyrightText: 2026 Pedro Sordo Martínez <amurlaniakea@gmail.com> -->
 <!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
 
-# statphys-viz
+# 🧲 statphys-viz
 
 > Interactive statistical physics visualizations for education: Ising model Monte Carlo with Jupyter widgets and live web demo.
 
@@ -222,3 +222,7 @@ Si usas este software, cítalo con el DOI de Zenodo (10.5281/zenodo.24389055):
 ```
 
 GitHub también ofrece «Cite this repository» a partir de `CITATION.cff`.
+
+---
+
+🌐 **Demo en vivo:** <https://amurlaniakea.github.io/statphys-viz/>
