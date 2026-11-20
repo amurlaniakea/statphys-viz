@@ -3,11 +3,9 @@ message: "If you use this software, please cite it as below."
 authors:
   - family-names: "Sordo Martínez"
     given-names: "Pedro"
-    orcid: "https://orcid.org/0000-0000-0000-0000"
 title: "statphys-viz: Interactive statistical physics visualizations for education"
-version: 0.1.0
-doi: ""
-date-released: 2026-11-18
+version: 0.2.0
+date-released: 2026-11-20
 url: "https://github.com/amurlaniakea/statphys-viz"
 license: "AGPL-3.0-or-later"
 repository-code: "https://github.com/amurlaniakea/statphys-viz"
