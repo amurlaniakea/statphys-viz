@@ -5,7 +5,7 @@ authors:
     given-names: "Pedro"
 title: "statphys-viz: Interactive statistical physics visualizations for education"
 version: 0.2.0
-doi: "10.5281/zenodo.24389056"
+doi: "10.5281/zenodo.24389055"
 date-released: 2026-11-20
 url: "https://github.com/amurlaniakea/statphys-viz"
 license: "AGPL-3.0-or-later"
