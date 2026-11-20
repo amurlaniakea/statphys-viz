@@ -25,6 +25,7 @@ table{border-collapse:collapse;font-size:.85rem;font-variant-numeric:tabular-num
 summary{cursor:pointer;font-weight:600}li{margin:.25rem 0}p{margin:.5rem 0}
 footer{margin:2.2rem 0 1rem;padding-top:1rem;border-top:1px solid var(--line);text-align:center;color:var(--mut)}
 .sig{font-size:1.1rem;letter-spacing:.04em}.g{color:var(--g)}.r{color:var(--r)}
+.cv2{width:100%;max-width:512px;height:220px;display:block;margin:.4rem 0;image-rendering:auto}.lg{margin:.3rem 0}
 </style></head><body>
 <p class="lema">«Tecnósfera al servicio de la Biósfera.» — «La Paz Es El Camino.»</p>
 <nav class="lang" aria-label="Idioma / Language / Langue"><button data-l="es">ES</button><button data-l="en">EN</button><button data-l="fr">FR</button></nav>
@@ -52,6 +53,12 @@ footer{margin:2.2rem 0 1rem;padding-top:1rem;border-top:1px solid var(--line);te
 <small data-i="sn"></small>
 </div></details>
 
+<details id="gd"><summary data-i="gh"></summary>
+<canvas id="ce" class="cv2" role="img"></canvas>
+<canvas id="cm" class="cv2" role="img"></canvas>
+<p class="lg"><span data-i="lg1"></span> &nbsp; <span data-i="lg2"></span> &nbsp; <span data-i="lg3"></span></p>
+<small data-i="gn"></small></details>
+
 <h2 data-i="th"></h2>
 <details><summary data-i="t1"></summary>
 <p data-i="m_h"></p><div class="fm">$$H=-J\sum_{\langle ij\rangle}s_i s_j,\quad s_i=\pm1,\qquad P(\mathbf{s})\propto e^{-\beta H},\quad \beta=\frac1T$$</div>
@@ -78,7 +85,7 @@ footer{margin:2.2rem 0 1rem;padding-top:1rem;border-top:1px solid var(--line);te
 <li>Binder, K. (1981). Z. Phys. B 43, 119. <a href="https://doi.org/10.1007/BF01293604">doi:10.1007/BF01293604</a></li></ul></details>
 
 <footer>
-<a href="https://github.com/amurlaniakea/statphys-viz" data-i="src"></a> · AGPL-3.0-or-later · © 2026 Pedro Sordo Martínez<br>
+<a href="https://github.com/amurlaniakea/statphys-viz" data-i="src"></a> · DOI <a href="https://doi.org/10.5281/zenodo.24389055">10.5281/zenodo.24389055</a> · AGPL-3.0-or-later · © 2026 Pedro Sordo Martínez<br>
 <span class="sig"><b class="g">MagoPredator</b> <b class="r">SPAIN</b></span>
 </footer>
 
@@ -86,7 +93,7 @@ footer{margin:2.2rem 0 1rem;padding-top:1rem;border-top:1px solid var(--line);te
 "use strict";
 /*I18N*/
 const D={
-es:{title:"Modelo de Ising 2D",
+es:{gh:"Gráfica: simulación frente a Onsager",gn:"Arriba, la energía por espín; abajo, |m|, ambas frente a T. La curva es la solución exacta (L → ∞). Pulsa el botón de barrido en Datos exportables para añadir puntos de Monte Carlo (L=32); el círculo es el estado actual de tu simulación (L=64). La línea discontinua marca $T_c$.",lg1:"<b style='color:var(--lnk)'>━</b> Onsager (exacta)",lg2:"<b style='color:#e65a28'>●</b> Barrido MC (L=32)",lg3:"<b>○</b> Estado actual (L=64)",title:"Modelo de Ising 2D",
 desc:"Simulación Monte Carlo interactiva de una transición de fase, comparada con la solución exacta de Onsager. Todo se calcula en tu navegador y puedes descargar los datos para verificarlos.",
 tl:"Temperatura T =",ow:"Wolff (clusters)",om:"Metropolis",rst:"Reiniciar",pause:"Pausa",cont:"Continuar",
 ph1:"Fase ordenada (T < Tc): dominios de un solo signo.",ph2:"Región crítica (T ≈ Tc): clusters a todas las escalas.",ph3:"Fase desordenada (T > Tc): espines casi independientes.",
@@ -106,7 +113,7 @@ o_tc:"Temperatura crítica:",o_m:"Magnetización espontánea (vale 0 para $T>T_c
 x_e:"Comportamiento crítico (exponentes β = 1/8, γ = 7/4, ν = 1, α = 0 logarítmico):",x_f:"Tamaño finito exactamente en $T_c$:",x_n:"Por eso con L finito los picos se redondean y |m| no cae a 0 por encima de $T_c$.",
 src:"Código fuente en GitHub",
 md:"Simulación interactiva del modelo de Ising 2D (Metropolis y Wolff) comparada con la solución exacta de Onsager. Datos exportables en CSV. Herramienta educativa de física estadística."},
-en:{title:"2D Ising model",
+en:{gh:"Chart: simulation vs Onsager",gn:"Top, energy per spin; bottom, |m|, both versus T. The curve is the exact solution (L → ∞). Press the sweep button in Exportable data to add Monte Carlo points (L=32); the circle is the current state of your simulation (L=64). The dashed line marks $T_c$.",lg1:"<b style='color:var(--lnk)'>━</b> Onsager (exact)",lg2:"<b style='color:#e65a28'>●</b> MC sweep (L=32)",lg3:"<b>○</b> Current state (L=64)",title:"2D Ising model",
 desc:"Interactive Monte Carlo simulation of a phase transition, compared with Onsager’s exact solution. Everything runs in your browser and you can download the data to check it.",
 tl:"Temperature T =",ow:"Wolff (clusters)",om:"Metropolis",rst:"Reset",pause:"Pause",cont:"Resume",
 ph1:"Ordered phase (T < Tc): single-sign domains.",ph2:"Critical region (T ≈ Tc): clusters at all scales.",ph3:"Disordered phase (T > Tc): nearly independent spins.",
@@ -126,7 +133,7 @@ o_tc:"Critical temperature:",o_m:"Spontaneous magnetization (equals 0 for $T>T_c
 x_e:"Critical behavior (exponents β = 1/8, γ = 7/4, ν = 1, α = 0 logarithmic):",x_f:"Finite size exactly at $T_c$:",x_n:"That is why, for finite L, peaks are rounded and |m| does not drop to 0 above $T_c$.",
 src:"Source code on GitHub",
 md:"Interactive 2D Ising model simulation (Metropolis and Wolff) compared with Onsager’s exact solution. CSV-exportable data. Educational statistical physics tool."},
-fr:{title:"Modèle d’Ising 2D",
+fr:{gh:"Graphique : simulation vs Onsager",gn:"En haut, l’énergie par spin ; en bas, |m|, toutes deux en fonction de T. La courbe est la solution exacte (L → ∞). Appuyez sur le bouton de balayage dans Données exportables pour ajouter des points Monte Carlo (L=32) ; le cercle est l’état actuel de votre simulation (L=64). La ligne en pointillés marque $T_c$.",lg1:"<b style='color:var(--lnk)'>━</b> Onsager (exacte)",lg2:"<b style='color:#e65a28'>●</b> Balayage MC (L=32)",lg3:"<b>○</b> État actuel (L=64)",title:"Modèle d’Ising 2D",
 desc:"Simulation Monte Carlo interactive d’une transition de phase, comparée à la solution exacte d’Onsager. Tout est calculé dans votre navigateur et vous pouvez télécharger les données pour les vérifier.",
 tl:"Température T =",ow:"Wolff (clusters)",om:"Metropolis",rst:"Réinitialiser",pause:"Pause",cont:"Reprendre",
 ph1:"Phase ordonnée (T < Tc) : domaines d’un seul signe.",ph2:"Région critique (T ≈ Tc) : clusters à toutes les échelles.",ph3:"Phase désordonnée (T > Tc) : spins presque indépendants.",
@@ -169,22 +176,41 @@ function make(L,R){const N=L*L,s=new Int8Array(N),NB=new Array(N);
  const obs=()=>{let m=0,e=0;for(let i=0;i<N;i++){m+=s[i];e-=s[i]*(s[NB[i][0]]+s[NB[i][2]])}return[e/N,Math.abs(m)/N]};
  reset();return{L,N,s,reset,metro,wolff,obs}}
 /*END*/
+/*PLOT*/
+const CE=[],CM=[];{const ts=[];for(let v=1;v<=4.0001;v+=0.01)ts.push(v);for(let k=2;k<=7;k++)ts.push(TC-Math.pow(10,-k));ts.push(TC);ts.sort((a,b)=>a-b);
+ for(const v of ts){const x=exact(v);CE.push([v,x.u]);CM.push([v,x.m])}}
+function plot(cv,o){const dpr=window.devicePixelRatio||1,W=cv.clientWidth||340,H=220;cv.width=W*dpr;cv.height=H*dpr;
+ const g=cv.getContext("2d");g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,W,H);
+ const cs=getComputedStyle(document.documentElement),col=n=>cs.getPropertyValue(n).trim()||"#888";
+ const L=46,R=10,Tp=10,B=34,pw=W-L-R,ph=H-Tp-B,X=v=>L+(v-1)/3*pw,Y=v=>Tp+(1-(v-o.ymin)/(o.ymax-o.ymin))*ph;
+ g.font="12px system-ui,sans-serif";g.lineWidth=1;g.strokeStyle=col("--line");g.fillStyle=col("--mut");g.strokeRect(L,Tp,pw,ph);
+ g.textAlign="center";for(let v=1;v<=4;v++)g.fillText(String(v),X(v),H-B+14);g.fillText("T",L+pw/2,H-6);
+ g.textAlign="right";for(const v of o.ticks){g.fillText(String(v),L-5,Y(v)+4);g.beginPath();g.moveTo(L,Y(v));g.lineTo(L+pw,Y(v));g.stroke()}
+ g.save();g.translate(12,Tp+ph/2);g.rotate(-Math.PI/2);g.textAlign="center";g.fillText(o.yl,0,0);g.restore();
+ g.setLineDash([4,3]);g.beginPath();g.moveTo(X(TC),Tp);g.lineTo(X(TC),Tp+ph);g.stroke();g.setLineDash([]);g.textAlign="left";g.fillText("Tc",X(TC)+3,Tp+12);
+ g.strokeStyle=col("--lnk");g.lineWidth=2;g.beginPath();o.curve.forEach(([x,y],i)=>i?g.lineTo(X(x),Y(y)):g.moveTo(X(x),Y(y)));g.stroke();
+ g.fillStyle="#e65a28";for(const[x,y]of o.pts){g.beginPath();g.arc(X(x),Y(y),3,0,7);g.fill()}
+ if(o.live){g.strokeStyle=col("--fg");g.lineWidth=2;g.beginPath();g.arc(X(o.live[0]),Y(o.live[1]),5,0,7);g.stroke()}}
+/*ENDPLOT*/
 const $=id=>document.getElementById(id);
 const sim=make(64,Math.random),ctx=$("c").getContext("2d"),img=ctx.createImageData(64,64);
-let T=2.269,run=true,step=0,hist=[],ex=exact(T),lang="es",scanDone=false;
+let T=2.269,run=true,step=0,hist=[],ex=exact(T),lang="es",scanDone=false,swp=[],lastEM=[0,0];
+function drawCharts(){if(!$("gd").open)return;const[e,m]=lastEM;
+ plot($("ce"),{curve:CE,pts:swp.map(r=>[r[0],r[1]]),live:[T,e],ymin:-2.1,ymax:0,ticks:[-2,-1.5,-1,-0.5,0],yl:t("el")});
+ plot($("cm"),{curve:CM,pts:swp.map(r=>[r[0],r[3]]),live:[T,m],ymin:0,ymax:1.05,ticks:[0,0.25,0.5,0.75,1],yl:"|m|"})}
 const t=k=>D[lang][k];
 function renderMath(){if(window.renderMathInElement)renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}],throwOnError:false})}
 function setLang(l){lang=l;try{localStorage.setItem("lang",l)}catch(e){}
  document.documentElement.lang=l;document.title="statphys-viz · "+t("title");$("md").content=t("md");$("c").setAttribute("aria-label",t("cv"));
  document.querySelectorAll("[data-i]").forEach(el=>{el.innerHTML=t(el.dataset.i)});
  document.querySelectorAll(".lang button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===l));
- $("run").textContent=run?t("pause"):t("cont");if(scanDone)$("prog").textContent=t("done");draw();renderMath()}
+ $("run").textContent=run?t("pause"):t("cont");if(scanDone)$("prog").textContent=t("done");$("ce").setAttribute("aria-label",t("gh")+": "+t("el"));$("cm").setAttribute("aria-label",t("gh")+": |m|");draw();drawCharts();renderMath()}
 function dl(name,text){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type:"text/csv"}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function draw(){const N=sim.N;for(let i=0;i<N;i++)img.data.set(sim.s[i]>0?[230,90,40,255]:[40,90,200,255],4*i);ctx.putImageData(img,0,0);
- const[e,m]=sim.obs();$("obs").textContent=`${t("el")} = ${e.toFixed(3)} (${t("ex")} ${ex.u.toFixed(3)})   |m| = ${m.toFixed(3)} (${t("ex")} ${ex.m.toFixed(3)})`;
+ const[e,m]=sim.obs();lastEM=[e,m];$("obs").textContent=`${t("el")} = ${e.toFixed(3)} (${t("ex")} ${ex.u.toFixed(3)})   |m| = ${m.toFixed(3)} (${t("ex")} ${ex.m.toFixed(3)})`;
  $("ph").textContent=T<TC-0.05?t("ph1"):T>TC+0.05?t("ph3"):t("ph2");return[e,m]}
 function frame(){if(run){const w=$("alg").value==="wolff";if(w)for(let k=0;k<5;k++)sim.wolff(T);else sim.metro(T);
- const[e,m]=draw();step++;if(hist.length>=20000)hist.splice(0,1000);hist.push([step,T,e,m])}requestAnimationFrame(frame)}
+ const[e,m]=draw();step++;if(hist.length>=20000)hist.splice(0,1000);hist.push([step,T,e,m]);if(step%6===0)drawCharts()}requestAnimationFrame(frame)}
 $("T").oninput=e=>{T=+e.target.value;ex=exact(T);$("tv").textContent=T.toFixed(3)};
 $("run").onclick=()=>{run=!run;$("run").textContent=run?t("pause"):t("cont")};
 $("rst").onclick=()=>{sim.reset();step=0;hist=[];draw()};
@@ -198,7 +224,8 @@ $("sc").onclick=async()=>{const b=$("sc");b.disabled=true;scanDone=false;const L
  const H=["T","e_MC","e_exact","absm_MC","absm_exact","C_MC","C_exact","chi_MC"],f=v=>v===Infinity?"∞":v.toFixed(4);
  $("tb").innerHTML="<tr>"+H.map(h=>"<th>"+h+"</th>").join("")+"</tr>"+rows.map(r=>"<tr>"+r.map(v=>"<td>"+f(v)+"</td>").join("")+"</tr>").join("");$("tb").hidden=false;
  dl("ising_sweep_vs_onsager.csv",`# statphys-viz, L=${L}, Wolff, thermalization=300, samples=1500, seed=1 (mulberry32)\n# *_exact: Onsager solution for L->infinity (C_exact=inf at Tc)\n`+H.join(",")+"\n"+rows.map(r=>r.map(v=>v===Infinity?"inf":v.toFixed(6)).join(",")).join("\n"));
- b.disabled=false;scanDone=true;$("prog").textContent=t("done")};
+ b.disabled=false;scanDone=true;swp=rows;drawCharts();$("prog").textContent=t("done")};
+$("gd").addEventListener("toggle",drawCharts);window.addEventListener("resize",drawCharts);
 document.querySelectorAll(".lang button").forEach(b=>b.onclick=()=>setLang(b.dataset.l));
 let l0=(navigator.language||"es").slice(0,2);try{l0=localStorage.getItem("lang")||l0}catch(e){}
 sim.reset();setLang(D[l0]?l0:"es");window.addEventListener("load",renderMath);frame();
