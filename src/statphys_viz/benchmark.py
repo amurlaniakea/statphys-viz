@@ -101,7 +101,7 @@ class OnsagerBenchmark:
         return OnsagerExact(T=T, beta=beta)
 
     def relative_error(self, mc_value: float, exact_value: float) -> float:
-        """Relative error: |mc - exact| / |exact|."""
+        """Relative error: ``abs(mc - exact) / abs(exact)``."""
         if abs(exact_value) < 1e-12:
             return abs(mc_value)
         return abs(mc_value - exact_value) / abs(exact_value)

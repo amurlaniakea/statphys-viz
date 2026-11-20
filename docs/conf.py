@@ -1,9 +1,18 @@
 # Sphinx configuration for statphys-viz documentation
+import statphys_viz
+
+project = "statphys-viz"
+author = "Pedro Sordo Martínez"
+copyright = "2026, Pedro Sordo Martínez"
+release = statphys_viz.__version__
+version = release
+language = "es"
 
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
+    "sphinx.ext.autosummary",
     "sphinx.ext.intersphinx",
     "nbsphinx",
 ]
@@ -31,3 +40,4 @@ intersphinx_mapping = {
 
 napoleon_google_docstring = True
 napoleon_numpy_docstring = True
+autosummary_generate = True

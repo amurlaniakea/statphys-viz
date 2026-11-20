@@ -2,7 +2,7 @@ name: Pages
 on:
   push:
     branches: [main]
-    paths: ["web/**", ".github/workflows/pages.yml"]
+    paths: ["web/**", "docs/**", "src/**", "pyproject.toml", ".github/workflows/pages.yml"]
   workflow_dispatch:
 permissions:
   contents: read
@@ -19,8 +19,21 @@ jobs:
       url: ${{ steps.dep.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build docs
+        run: |
+          pip install -e ".[docs]"
+          make -C docs html
+      - name: Assemble site (demo at /, docs at /docs/)
+        run: |
+          mkdir _site
+          cp -r web/. _site/
+          cp -r docs/_build/html _site/docs
+          touch _site/.nojekyll
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: web
+          path: _site
       - id: dep
         uses: actions/deploy-pages@v4
