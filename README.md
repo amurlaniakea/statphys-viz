@@ -6,8 +6,7 @@
 > Interactive statistical physics visualizations for education: Ising model Monte Carlo with Jupyter widgets and live web demo.
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0.txt)
-![Tests](https://github.com/amurlaniakea/statphys-viz/workflows/Tests/badge.svg)
-![Lint](https://github.com/amurlaniakea/statphys-viz/workflows/Lint/badge.svg)
+[![CI](https://github.com/amurlaniakea/statphys-viz/actions/workflows/ci.yml/badge.svg)](https://github.com/amurlaniakea/statphys-viz/actions/workflows/ci.yml)
 
 **statphys-viz** provides a complete, verified implementation of the 2D Ising model for statistical physics education. It includes both Metropolis and Wolff cluster Monte Carlo algorithms, real-time visualization via Jupyter widgets, and quantitative validation against the Onsager exact solution.
 
@@ -72,7 +71,6 @@ statphys-viz/
 git clone https://github.com/amurlaniakea/statphys-viz.git
 cd statphys-viz
 pip install -e ".[dev]"   # includes pytest, ruff, bandit
-pip install -e ".[web]"   # includes ipywidgets, ipycanvas
 ```
 
 **Requirements:** Python ≥ 3.10, NumPy, Numba, Matplotlib, SciPy, ipywidgets.
@@ -82,7 +80,7 @@ pip install -e ".[web]"   # includes ipywidgets, ipycanvas
 ### Quick Start (Python)
 
 ```python
-from statphys_viz import IsingModel, IsingConfig, WolffClusterSampler, OnsagerBenchmark
+from statphys_viz import IsingConfig, IsingModel, OnsagerBenchmark
 
 # Configure model near critical temperature
 config = IsingConfig(L=64, T=2.269, J=1.0, algorithm="wolff")
@@ -164,20 +162,19 @@ All validation tests assert relative errors vs Onsager exact solution.
 
 ## Resultados
 
-| Observable | T = 2.0 (T<Tc) | T = 2.269 (Tc) | T = 3.0 (T>Tc) |
-|------------|----------------|----------------|----------------|
-| Energy/spin | -1.38 ± 0.01 | -1.03 ± 0.01 | -0.33 ± 0.01 |
-| |M|/spin | 0.92 ± 0.01 | 0.15 ± 0.02 | 0.03 ± 0.01 |
-| Specific heat | 0.45 ± 0.05 | 1.8 ± 0.2 | 0.12 ± 0.02 |
-| Susceptibility | 85 ± 10 | 420 ± 50 | 12 ± 2 |
-| **Max rel. error** | **< 2%** | **< 5%** | **< 3%** |
+Reproducible con el CLI (L=32, Wolff, seed=1); compara MC con Onsager:
 
-*Measured on L=64, 2000 Wolff clusters after 500 thermalization. Errors vs Onsager exact.*
+```bash
+python -m statphys_viz.benchmark --L 32 --T-min 1.5 --T-max 3.5 --points 5
+```
 
-**Critical exponents (finite-size scaling at Tc):**
-- β/ν = 0.124 ± 0.003 (exact: 0.125)
-- γ/ν = 1.74 ± 0.02 (exact: 1.75)
-- ν = 1.01 ± 0.02 (exact: 1.0)
+| T | e MC | e exacta | \|m\| MC | \|m\| exacta |
+|---|------|----------|---------|-----------|
+| 1.5 | -1.950 | -1.951 | 0.986 | 0.987 |
+| 2.0 | -1.743 | -1.746 | 0.910 | 0.911 |
+| 3.0 | -0.831 | -0.817 | 0.095 | 0 (finite-size) |
+
+Los exponentes críticos se obtienen con `fit_critical_exponents` (ver tests).
 
 ## Live Demo
 
@@ -189,7 +186,7 @@ Zero-installation web demo with:
 - Real-time observable plots
 - Algorithm comparison (Metropolis vs Wolff)
 
-*Runs entirely in browser via Pyodide/WebAssembly.*
+*Runs entirely in the browser in plain JavaScript (`web/index.html`); numba does not run under Pyodide.*
 
 ## Licencia
 

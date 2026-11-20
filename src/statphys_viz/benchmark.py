@@ -59,29 +59,28 @@ class OnsagerExact:
     c_exact: float = 0.0
 
     def __post_init__(self) -> None:
+        K2 = 2.0 * self.beta  # 2*beta*J con J=1 (el modelo usa J=1 en la referencia)
+        sh, ch, th = np.sinh(K2), np.cosh(K2), np.tanh(K2)
+
+        # Magnetización espontánea (solo T < Tc): m = (1 - sinh^-4(2βJ))^(1/8)
         if self.T < ONSAGER_TC:
-            k = 1.0 / np.sinh(2.0 * self.beta) ** 2
-            self.m_exact = (1.0 - k**2) ** (1.0 / 8.0)
+            self.m_exact = (1.0 - sh**-4) ** 0.125
 
-        # Specific heat (per spin) - Onsager exact solution
-        # C = (2/π) * (K(k) - E(k)) * (2βJ/sinh(2βJ))^2
-        # where k = 1/sinh²(2βJ) for T < Tc (always ≤ 1)
-        # and k = sinh²(2βJ) for T > Tc (always ≤ 1)
-        if self.T < ONSAGER_TC:
-            k = 1.0 / (np.sinh(2.0 * self.beta) ** 2)
-        else:
-            k = np.sinh(2.0 * self.beta) ** 2
-
-        K = special.ellipk(k)
-        E = special.ellipe(k)
-
-        sinh2b = np.sinh(2.0 * self.beta)
-        self.u_exact = (
-            -1.0 / np.tanh(2.0 * self.beta) * (1.0 + (2.0 / np.pi) * (2.0 * K - E) / sinh2b)
+        # Energía y calor específico por espín (Onsager 1944), módulo k = 2 sinh/cosh².
+        # scipy.special.ellipk/ellipe toman el parámetro m = k², no el módulo.
+        if abs(self.T - ONSAGER_TC) < 1e-9:
+            self.u_exact = -np.sqrt(2.0)
+            self.c_exact = float("inf")  # divergencia logarítmica en Tc
+            return
+        m = min((2.0 * sh / ch**2) ** 2, 1.0 - 1e-15)
+        K = special.ellipk(m)
+        E = special.ellipe(m)
+        self.u_exact = float(-(1.0 / th) * (1.0 + (2.0 / np.pi) * (2.0 * th**2 - 1.0) * K))
+        self.c_exact = float(
+            (1.0 / np.pi)
+            * (K2 / th) ** 2
+            * (K - E - (1.0 - th**2) * (np.pi / 2.0 + (2.0 * th**2 - 1.0) * K))
         )
-
-        pref = (2.0 / np.pi) * (2.0 * self.beta / sinh2b) ** 2
-        self.c_exact = pref * (K - E)
 
 
 class OnsagerBenchmark:
@@ -287,3 +286,40 @@ def fit_critical_exponents(
     slope_err = sigma / np.sqrt(np.sum((log_L - np.mean(log_L)) ** 2))
 
     return slope, slope_err
+
+
+def main(argv: list[str] | None = None) -> int:
+    """CLI: barrido de temperatura con Wolff y comparación con Onsager."""
+    import argparse
+
+    from .ising import IsingConfig, IsingModel
+
+    ap = argparse.ArgumentParser(prog="python -m statphys_viz.benchmark")
+    ap.add_argument("--L", type=int, default=32)
+    ap.add_argument("--T-min", type=float, default=1.5)
+    ap.add_argument("--T-max", type=float, default=3.5)
+    ap.add_argument("--points", type=int, default=20)
+    ap.add_argument("--therm", type=int, default=500)
+    ap.add_argument("--samples", type=int, default=2000)
+    ap.add_argument("--seed", type=int, default=1)
+    a = ap.parse_args(argv)
+
+    bench = OnsagerBenchmark(L=a.L)
+    print(
+        f"{'T':>6} {'e_MC':>9} {'e_exact':>9} {'|m|_MC':>8} {'|m|_ex':>8} {'C_MC':>7} {'C_ex':>7}"
+    )
+    for T in np.linspace(a.T_min, a.T_max, a.points):
+        model = IsingModel(IsingConfig(L=a.L, T=float(T), algorithm="wolff", seed=a.seed))
+        model.thermalize(a.therm)
+        r = model.measure(a.samples)
+        ex = bench.exact_values(float(T))
+        print(
+            f"{T:6.3f} {r['energy_mean']:9.4f} {ex.u_exact:9.4f} "
+            f"{r['magnetization_mean']:8.4f} {ex.m_exact:8.4f} "
+            f"{r['specific_heat']:7.3f} {ex.c_exact:7.3f}"
+        )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -260,3 +260,27 @@ def plot_finite_size_scaling(
 
 # Constant for Onsager Tc
 ONSAGER_TC = 2.0 / np.log(1.0 + np.sqrt(2.0))
+
+
+def main(argv: list[str] | None = None) -> int:
+    """CLI: guarda una instantánea de espines cerca de Tc."""
+    import argparse
+
+    from .ising import IsingConfig, IsingModel
+
+    ap = argparse.ArgumentParser(prog="python -m statphys_viz.visualize")
+    ap.add_argument("--output", default="spins.png")
+    ap.add_argument("--L", type=int, default=64)
+    ap.add_argument("--T", type=float, default=2.269)
+    a = ap.parse_args(argv)
+
+    model = IsingModel(IsingConfig(L=a.L, T=a.T, algorithm="wolff", seed=1))
+    model.thermalize(300)
+    ax = plot_spin_config(model.spins, title=f"Ising 2D  L={a.L}  T={a.T}")
+    ax.figure.savefig(a.output, dpi=150, bbox_inches="tight")
+    print(f"Guardado {a.output}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

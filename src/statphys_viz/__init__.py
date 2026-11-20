@@ -27,7 +27,7 @@ exact solution.
 """
 
 from .benchmark import CriticalExponents, OnsagerBenchmark
-from .ising import IsingModel, MetropolisSampler, WolffClusterSampler
+from .ising import IsingConfig, IsingModel, MetropolisSampler, WolffClusterSampler
 
 __version__ = "0.1.0"
 __author__ = "Pedro Sordo Martínez"
@@ -35,6 +35,7 @@ __email__ = "amurlaniakea@gmail.com"
 __license__ = "AGPL-3.0-or-later"
 
 __all__ = [
+    "IsingConfig",
     "IsingModel",
     "MetropolisSampler",
     "WolffClusterSampler",

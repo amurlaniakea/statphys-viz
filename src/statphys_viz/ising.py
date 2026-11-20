@@ -37,7 +37,7 @@ from dataclasses import dataclass
 from typing import Literal
 
 import numpy as np
-from numba import njit, prange
+from numba import njit
 
 
 @njit(cache=True, fastmath=True)
@@ -64,7 +64,13 @@ def _delta_energy(spins: np.ndarray, i: int, j: int, J: float, h: float) -> floa
     return 2.0 * J * s * nb_sum + 2.0 * h * s
 
 
-@njit(cache=True, parallel=True, fastmath=True)
+@njit(cache=True, fastmath=True)
+def _seed_numba(seed: int) -> None:
+    """Siembra el RNG global de numba (np.random dentro de funciones njit)."""
+    np.random.seed(seed)
+
+
+@njit(cache=True, fastmath=True)
 def _metropolis_sweep(
     spins: np.ndarray,
     J: float,
@@ -76,8 +82,9 @@ def _metropolis_sweep(
     L = spins.shape[0]
     accepted = 0
 
-    # Use thread-local RNG state
-    for idx in prange(L * L):
+    # Barrido secuencial: prange sobre vecinos acoplados es una carrera de datos
+    # y rompe el balance detallado.
+    for idx in range(L * L):
         i = idx // L
         j = idx % L
 
@@ -178,6 +185,11 @@ class IsingModel:
         self.h = config.h
         self.T = config.T
         self.beta = 1.0 / config.T if config.T > 0 else np.inf
+
+        if config.algorithm == "wolff" and config.h != 0.0:
+            raise ValueError("Wolff no es válido con campo externo h != 0; usa 'metropolis'.")
+        if config.seed is not None:
+            _seed_numba(config.seed)
 
         # Initialize spins
         rng = np.random.default_rng(config.seed)

@@ -8,11 +8,7 @@ Ising model Monte Carlo with Jupyter widgets and live web demo.
    :maxdepth: 2
    :caption: Contents:
 
-   installation
-   quickstart
    api
-   examples
-   theory
 
 Indices and tables
 ==================
